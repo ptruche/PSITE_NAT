@@ -10,72 +10,191 @@ from psite_core import (
     overall_accuracy, sr_due_ids, sr_update, load_progress,
     topic_to_slug, get_review_word_count, load_history
 )
+
 # ------------------------------------------------------------------ #
 # 1. Page config + theme
 # ------------------------------------------------------------------ #
 st.set_page_config(
     page_title="PSITE Mastery",
-    page_icon="https://i.fbcd.co/products/resized/resized-750-500/s005e-26-e07-mainpreview-11f76902af216746cd69fefb519f397472ae3f992e346a94a460aba7664c0a5b.jpg",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 apply_base_theme()
 ensure_session_keys()
 try_auto_login_persisted()
+
 # ------------------------------------------------------------------ #
 # 2. Global CSS
 # ------------------------------------------------------------------ #
 st.markdown(
     """
 <style>
-:root {--accent:#1d4ed8; --border:#e5e7eb; --bg:#ffffff; --text:#111111;}
-@media (prefers-color-scheme: dark) {
-  :root {--accent:#3b82f6; --border:#374151; --bg:#111827; --text:#f9fafb;}
+:root {
+    --accent: #1d4ed8;
+    --border: #e5e7eb;
+    --bg: #ffffff;
+    --text: #111111;
 }
-html, body, [data-testid="stAppViewContainer"] {background:var(--bg); color:var(--text);}
-.app-header {position:fixed; top:0; left:0; right:0; height:56px; background:var(--bg);
-  border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 1.5rem;
-  z-index:10000; justify-content:space-between; font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,0.05);}
-.app-header .logo {font-size:1.2rem; font-weight:900;}
-.app-header .logo span {color:var(--accent);}
-.main {margin-top:56px; padding:1.5rem;}
-.q-prompt {border:1px solid var(--border); background:#f9fafb; border-radius:10px;
-  padding:1.25rem; margin-bottom:1rem; font-size:1rem;}
-.verdict-ok {background:#10b9811a; color:#065f46; border:1px solid #34d399;}
-.verdict-err {background:#ef44441a; color:#7f1d1d; border:1px solid #fca5a5;}
-.section-title {font-size:1.5rem; font-weight:700; margin-bottom:1rem;}
-.kpi-card {display:flex; align-items:center; gap:1rem; padding:1rem; border:1px solid var(--border); border-radius:10px; background:var(--bg);}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --accent: #3b82f6;
+        --border: #374151;
+        --bg: #111827;
+        --text: #f9fafb;
+    }
+}
+html, body, [data-testid="stAppViewContainer"] {
+    background: var(--bg);
+    color: var(--text);
+}
+.app-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    z-index: 10000;
+    justify-content: space-between;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.app-header .logo {
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+.app-header .logo span {
+    color: var(--accent);
+}
+.main {
+    margin-top: 56px;
+    padding: 1.5rem;
+}
+.q-prompt {
+    border: 1px solid var(--border);
+    background: #f9fafb;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+.verdict-ok {
+    background: #10b9811a;
+    color: #065f46;
+    border: 1px solid #34d399;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+.verdict-err {
+    background: #ef44441a;
+    color: #7f1d1d;
+    border: 1px solid #fca5a5;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+}
 .kpi-ring {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: conic-gradient(var(--accent) 0deg, var(--accent) calc(var(--val) * 3.6deg), var(--border) calc(var(--val) * 3.6deg) 360deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent) 0deg, var(--accent) calc(var(--val) * 3.6deg), #e5e7eb calc(var(--val) * 3.6deg) 360deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.kpi-ring::after {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    background: var(--bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .kpi-ring > div {
-  width: 80%;
-  height: 80%;
-  background: var(--bg);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  color: var(--text);
+    position: relative;
+    z-index: 1;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text);
 }
-.topic-title {font-weight:600; margin-bottom:.5rem;}
-.meter {height:4px; background:var(--border); border-radius:2px; position:relative;}
-.meter > span {position:absolute; top:0; left:0; bottom:0; background:var(--accent); border-radius:2px;}
-.badge {font-size:.78rem; color:#6b7280; display:flex; align-items:center; gap:.25rem;}
-.dot {width:8px; height:8px; border-radius:50%; background:#d1d5db;}
-.dot.green {background:#10b981;}
-.last-attempt {font-size:.82rem; color:#6b7280; margin-bottom:.5rem;}
+.topic-title {
+    font-weight: 600;
+    margin-bottom: .5rem;
+}
+.meter {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+.meter > span {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+.badge {
+    font-size: .78rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+}
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #d1d5db;
+}
+.dot.green {
+    background: #10b981;
+}
+.last-attempt {
+    font-size: .82rem;
+    color: #6b7280;
+    margin-bottom: .5rem;
+}
+.sidebar-logo {
+    text-align: center;
+    padding: 1rem 0;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+}
+.sidebar-logo span {
+    color: var(--accent);
+}
 </style>
 """,
     unsafe_allow_html=True,
 )
+
 # ------------------------------------------------------------------ #
 # 3. AUTH
 # ------------------------------------------------------------------ #
@@ -85,21 +204,26 @@ if not auth_is_authed():
         st.caption("Sign-in to unlock your personal dashboard, spaced-repetition, and analytics.")
         auth_login_form()
     st.stop()
+
 # ------------------------------------------------------------------ #
 # 4. CACHING
 # ------------------------------------------------------------------ #
 @st.cache_data(ttl=3600, show_spinner=False)
 def _load_all_questions() -> pd.DataFrame:
     return load_questions_frame()
+
 ALL_Q = _load_all_questions()
+
 def load_questions_for_subjects(subjects: list) -> pd.DataFrame:
     if not subjects:
         return ALL_Q
     return ALL_Q[ALL_Q["subject"].isin(subjects)].reset_index(drop=True)
+
 # ------------------------------------------------------------------ #
 # 5. Helpers
 # ------------------------------------------------------------------ #
 def _pct(n, d): return int(round(100 * n / d)) if d else 0
+
 def _render_topic_card(topic: str):
     total = int(Q_COUNT.get(topic, 0))
     prog = PROGRESS.get(topic, {})
@@ -133,6 +257,7 @@ def _render_topic_card(topic: str):
             if st.button("Quiz", key=f"quiz_{topic}", use_container_width=True):
                 pool = load_questions_for_subjects([topic]).reset_index(drop=True)
                 _start_quiz(pool, mode="normal", topic=topic)
+
 # ------------------------------------------------------------------ #
 # 6. Quiz engine
 # ------------------------------------------------------------------ #
@@ -147,6 +272,7 @@ def _start_quiz(df: pd.DataFrame, mode: str = "normal", topic: str | None = None
     st.session_state.view = "quiz"
     st.session_state.quiz_status = {}
     st.rerun()
+
 def _record_and_update(row: pd.Series, correct: bool):
     key = f"scored_{row['id']}"
     if not st.session_state.get(key, False):
@@ -155,11 +281,13 @@ def _record_and_update(row: pd.Series, correct: bool):
             sr_update(row["id"], correct)
         st.session_state[key] = True
     st.session_state.quiz_status[row["id"]] = correct
+
 # ------------------------------------------------------------------ #
 # 7. PRE-COMPUTE
 # ------------------------------------------------------------------ #
 Q_COUNT = questions_count_by_topic()
 PROGRESS = load_progress()
+
 # ------------------------------------------------------------------ #
 # 8. HEADER + SIDEBAR
 # ------------------------------------------------------------------ #
@@ -171,8 +299,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Add logo to sidebar
-st.sidebar.image("https://i.fbcd.co/products/resized/resized-750-500/s005e-26-e07-mainpreview-11f76902af216746cd69fefb519f397472ae3f992e346a94a460aba7664c0a5b.jpg", use_column_width=True)
+# TEXT-ONLY LOGO IN SIDEBAR (always visible, no image)
+st.sidebar.markdown(
+    """
+    <div class="sidebar-logo">
+        PSITE <span>Mastery</span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 nav = {
     "Dashboard": "dashboard",
@@ -183,20 +318,26 @@ for label, view in nav.items():
     if st.sidebar.button(label, key=f"nav_{view}", use_container_width=True):
         st.session_state.view = view
         st.rerun()
+
 st.sidebar.markdown("<div class='sidebar-sep'></div>", unsafe_allow_html=True)
+
 if st.sidebar.button("Spaced Repetition", key="nav_sr", use_container_width=True):
     ids = sr_due_ids(limit=50)
     pool = ALL_Q[ALL_Q["id"].isin(ids)].reset_index(drop=True) if not ALL_Q.empty else ALL_Q
     _start_quiz(pool, mode="spaced")
+
 st.sidebar.markdown("<div class='sidebar-sep'></div>", unsafe_allow_html=True)
+
 if st.sidebar.button("Logout", type="secondary", use_container_width=True):
     clear_persisted_login()
     st.rerun()
+
 # ------------------------------------------------------------------ #
 # 9. MAIN + VIEW ROUTER
 # ------------------------------------------------------------------ #
 st.markdown("<div class='main'>", unsafe_allow_html=True)
 view = st.session_state.get("view", "dashboard")
+
 # ---------- DASHBOARD ----------
 if view == "dashboard":
     st.markdown("<div class='section-title'>Overview</div>", unsafe_allow_html=True)
@@ -231,6 +372,7 @@ if view == "dashboard":
             """,
             unsafe_allow_html=True,
         )
+
 # ---------- TOPICS ----------
 elif view == "topics":
     st.markdown("<div class='section-title'>Score Topics</div>", unsafe_allow_html=True)
@@ -256,6 +398,7 @@ elif view == "topics":
         for i, t in enumerate(topics):
             with cols[i % 3]:
                 _render_topic_card(t)
+
 # ---------- REVIEW ----------
 elif view == "review":
     topic = st.session_state.get("active_topic")
@@ -281,6 +424,7 @@ elif view == "review":
             st.session_state.quiz_mode = "normal"
             st.session_state.view = "quiz"
             st.rerun()
+
 # ---------- MAKE QUIZ ----------
 elif view == "make_quiz":
     st.markdown("<div class='section-title'>Make a Quiz</div>", unsafe_allow_html=True)
@@ -300,6 +444,7 @@ elif view == "make_quiz":
         st.session_state.quiz_mode = "normal"
         st.session_state.view = "quiz"
         st.rerun()
+
 # ---------- QUIZ ----------
 elif view == "quiz":
     pool: pd.DataFrame = st.session_state.get("quiz_pool")
@@ -316,7 +461,6 @@ elif view == "quiz":
         st.progress(pct/100)
         suffix = f" • {row.get('subject','')}" if row.get('subject') else ""
         st.caption(f"Question {i+1} of {len(pool)}{suffix}")
-        # Last attempt time
         q_attempts = [h for h in history if h["id"] == row["id"]]
         if q_attempts:
             last_ts = max(h["ts"] for h in q_attempts)
@@ -362,4 +506,5 @@ elif view == "quiz":
             correct_n = sum(1 for qid in scored_ids if idxed.loc[qid]["correct"] == st.session_state.quiz_answers[qid])
             denom = len(scored_ids) if scored_ids else len(pool)
             st.success(f"Score: {correct_n}/{denom}")
-st.markdown("</div>", unsafe_allow_html=True) # .main
+
+st.markdown("</div>", unsafe_allow_html=True)  # .main
