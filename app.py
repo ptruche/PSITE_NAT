@@ -16,7 +16,7 @@ from psite_core import (
 # ------------------------------------------------------------------ #
 st.set_page_config(
     page_title="PSITE Mastery",
-    page_icon="📊",
+    page_icon="chart_with_upwards_trend",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -62,13 +62,6 @@ html, body, [data-testid="stAppViewContainer"] {
     font-weight: 600;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-.app-header .logo {
-    font-size: 1.2rem;
-    font-weight: 900;
-}
-.app-header .logo span {
-    color: var(--accent);
-}
 .main {
     margin-top: 56px;
     padding: 1.5rem;
@@ -77,7 +70,7 @@ html, body, [data-testid="stAppViewContainer"] {
     border: 1px solid var(--border);
     background: #f9fafb;
     border-radius: 10px;
-    padding: 1.25.
+    padding: 1.25rem;
     margin-bottom: 1rem;
     font-size: 1rem;
 }
@@ -288,15 +281,16 @@ PROGRESS = load_progress()
 # ------------------------------------------------------------------ #
 # 8. HEADER + SIDEBAR
 # ------------------------------------------------------------------ #
+# Clean header — NO LOGO (prevents flash on sidebar collapse)
 st.markdown(
     "<div class='app-header'>"
-    "<div class='logo'>PSITE <span>Mastery</span></div>"
+    "<div></div>"
     "<div></div>"
     "</div>",
     unsafe_allow_html=True,
 )
 
-# TEXT-ONLY LOGO IN SIDEBAR
+# TEXT-ONLY LOGO IN SIDEBAR — only visible source
 st.sidebar.markdown(
     """
     <div class="sidebar-logo">
@@ -306,10 +300,10 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
-# NAVIGATION — "Score Topics" → "Topics"
+# NAVIGATION
 nav = {
     "Dashboard": "dashboard",
-    "Topics": "topics",        # ← Changed
+    "Topics": "topics",        # ← Renamed from "Score Topics"
     "Make Quiz": "make_quiz",
 }
 for label, view in nav.items():
@@ -371,9 +365,9 @@ if view == "dashboard":
             unsafe_allow_html=True,
         )
 
-# ---------- TOPICS (was "Score Topics") ----------
+# ---------- TOPICS ----------
 elif view == "topics":
-    st.markdown("<div class='section-title'>Topics</div>", unsafe_allow_html=True)  # ← Changed
+    st.markdown("<div class='section-title'>Topics</div>", unsafe_allow_html=True)
     cats = get_category_map()
     s1, s2 = st.columns([2, 1])
     with s1:
