@@ -77,7 +77,7 @@ html, body, [data-testid="stAppViewContainer"] {
     border: 1px solid var(--border);
     background: #f9fafb;
     border-radius: 10px;
-    padding: 1.25rem;
+    padding: 1.25.
     margin-bottom: 1rem;
     font-size: 1rem;
 }
@@ -128,9 +128,6 @@ html, body, [data-testid="stAppViewContainer"] {
     height: 80%;
     background: var(--bg);
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 .kpi-ring > div {
     position: relative;
@@ -299,7 +296,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# TEXT-ONLY LOGO IN SIDEBAR (always visible, no image)
+# TEXT-ONLY LOGO IN SIDEBAR
 st.sidebar.markdown(
     """
     <div class="sidebar-logo">
@@ -309,9 +306,10 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
+# NAVIGATION — "Score Topics" → "Topics"
 nav = {
     "Dashboard": "dashboard",
-    "Score Topics": "topics",
+    "Topics": "topics",        # ← Changed
     "Make Quiz": "make_quiz",
 }
 for label, view in nav.items():
@@ -373,9 +371,9 @@ if view == "dashboard":
             unsafe_allow_html=True,
         )
 
-# ---------- TOPICS ----------
+# ---------- TOPICS (was "Score Topics") ----------
 elif view == "topics":
-    st.markdown("<div class='section-title'>Score Topics</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Topics</div>", unsafe_allow_html=True)  # ← Changed
     cats = get_category_map()
     s1, s2 = st.columns([2, 1])
     with s1:
@@ -403,7 +401,7 @@ elif view == "topics":
 elif view == "review":
     topic = st.session_state.get("active_topic")
     if not topic:
-        st.info("Choose a topic from Score Topics.")
+        st.info("Choose a topic from Topics.")
     else:
         st.markdown(f"<div class='section-title'>{topic}</div>", unsafe_allow_html=True)
         p = resolve_review_path(topic)
